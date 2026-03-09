@@ -32,10 +32,10 @@ jobs:
         run: |
           APP_PATH=$(find notchi/build -name "notchi.app" -type d | head -1)
           echo "App at: $APP_PATH"
-          # Create a zip for download
-          cd "$(dirname "$APP_PATH")"
-          zip -r /tmp/PokenNotch.zip "$(basename "$APP_PATH")"
-          cp /tmp/PokenNotch.zip $GITHUB_WORKSPACE/
+          ls -la "$APP_PATH/Contents/MacOS/"
+          # Use ditto to preserve permissions and symlinks
+          ditto -c -k --keepParent "$APP_PATH" PokenNotch.zip
+          ls -lh PokenNotch.zip
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
