@@ -24,16 +24,32 @@ jobs:
             -configuration Release \
             -derivedDataPath build \
             CODE_SIGN_IDENTITY="-" \
-            CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGNING_ALLOWED=NO \
-            2>&1 | tail -20
+            CODE_SIGN_STYLE=Manual \
+            DEVELOPMENT_TEAM="" \
+            -verbose \
+            2>&1 | tail -40
 
-      - name: Package
+      - name: Verify and Package
         run: |
           APP_PATH=$(find notchi/build -name "notchi.app" -type d | head -1)
           echo "App at: $APP_PATH"
-          ls -la "$APP_PATH/Contents/MacOS/"
-          # Use ditto to preserve permissions and symlinks
+
+          # Show full contents
+          find "$APP_PATH" -type f | head -30
+
+          # Check binary
+          BINARY="$APP_PATH/Contents/MacOS/notchi"
+          if [ -f "$BINARY" ]; then
+            echo "Binary found!"
+            file "$BINARY"
+          else
+            echo "Binary NOT found. Checking build products..."
+            find notchi/build -name "notchi" -type f 2>/dev/null
+            # Maybe it's in a different location
+            find notchi/build -type f -perm +111 | head -10
+          fi
+
+          # Package with ditto
           ditto -c -k --keepParent "$APP_PATH" PokenNotch.zip
           ls -lh PokenNotch.zip
 
