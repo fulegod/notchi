@@ -1,0 +1,44 @@
+name: Build PokéNotch
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_16.2.app
+
+      - name: Build
+        run: |
+          cd notchi
+          xcodebuild -project notchi.xcodeproj \
+            -scheme notchi \
+            -configuration Release \
+            -derivedDataPath build \
+            CODE_SIGN_IDENTITY="-" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            2>&1 | tail -20
+
+      - name: Package
+        run: |
+          APP_PATH=$(find notchi/build -name "notchi.app" -type d | head -1)
+          echo "App at: $APP_PATH"
+          # Create a zip for download
+          cd "$(dirname "$APP_PATH")"
+          zip -r /tmp/PokenNotch.zip "$(basename "$APP_PATH")"
+          cp /tmp/PokenNotch.zip $GITHUB_WORKSPACE/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: PokenNotch
+          path: PokenNotch.zip
