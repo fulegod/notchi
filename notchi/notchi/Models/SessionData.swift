@@ -47,10 +47,10 @@ final class SessionData: Identifiable {
 
     var currentModeDisplay: String? {
         switch permissionMode {
-        case "plan": return "Plan Mode"
-        case "acceptEdits": return "Accept Edits"
-        case "dontAsk": return "Don't Ask"
-        case "bypassPermissions": return "Bypass"
+        case "plan": return "Modo Plan"
+        case "acceptEdits": return "Aceptar Ediciones"
+        case "dontAsk": return "No Preguntar"
+        case "bypassPermissions": return "Sin Permisos"
         default: return nil
         }
     }
@@ -80,8 +80,8 @@ final class SessionData: Identifiable {
     private static let xCollisionRetries = 10
     private static let xNudgeStep: CGFloat = 0.23
 
-    private static let yOffsetBase: CGFloat = -5.0
-    private static let yOffsetRange: UInt = 51
+    private static let yOffsetBase: CGFloat = -15.0
+    private static let yOffsetRange: UInt = 10
 
     init(sessionId: String, cwd: String, sessionNumber: Int, existingXPositions: [CGFloat] = []) {
         self.id = sessionId

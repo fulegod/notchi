@@ -34,7 +34,7 @@ struct UsageBarView: View {
                 HStack(spacing: 4) {
                     Image(systemName: "lock.shield")
                         .font(.system(size: 10))
-                    Text("Tap to show Claude usage")
+                    Text("Toca para ver uso de Claude")
                         .font(.system(size: 11, weight: .medium))
                 }
                 .foregroundColor(TerminalColors.dimmedText)
@@ -58,7 +58,7 @@ struct UsageBarView: View {
                             Text(error)
                                 .font(.system(size: 11, weight: .medium))
                                 .foregroundColor(TerminalColors.dimmedText)
-                            Text("(tap to retry)")
+                            Text("(toca para reintentar)")
                                 .font(.system(size: 10))
                                 .foregroundColor(TerminalColors.dimmedText)
                         }
@@ -66,12 +66,12 @@ struct UsageBarView: View {
                     .buttonStyle(.plain)
                 } else if let usage, let resetTime = usage.formattedResetTime {
                     HStack(spacing: 4) {
-                        Text("Resets in \(resetTime)")
+                        Text("Se reinicia en \(resetTime)")
                             .font(.system(size: 11, weight: .medium))
                             .foregroundColor(TerminalColors.secondaryText)
                         if isStale {
                             Button(action: { onConnect?() }) {
-                                Text("(tap to reconnect)")
+                                Text("(toca para reconectar)")
                                     .font(.system(size: 10))
                                     .foregroundColor(TerminalColors.dimmedText)
                             }
@@ -79,7 +79,7 @@ struct UsageBarView: View {
                         }
                     }
                 } else {
-                    Text("Claude Usage")
+                    Text("Uso de Claude")
                         .font(.system(size: 11, weight: .medium))
                         .foregroundColor(TerminalColors.secondaryText)
                 }

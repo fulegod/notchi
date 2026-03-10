@@ -1,7 +1,7 @@
 import SwiftUI
 
 private enum SpriteLayout {
-    static let size: CGFloat = 64
+    static let size: CGFloat = 72
     static let usableWidthFraction: CGFloat = 0.8
     static let leftMarginFraction: CGFloat = 0.1
 
@@ -159,11 +159,15 @@ private struct GrassSpriteView: View {
     private let glowColor = Color(red: 0.4, green: 0.7, blue: 1.0)
 
     private var swayAmplitude: Double {
-        (state.task == .sleeping || state.task == .compacting) ? 0 : state.swayAmplitude
+        (state.task == .sleeping || state.task == .compacting || state.task == .idle) ? 0 : state.swayAmplitude
+    }
+
+    private var shouldAnimate: Bool {
+        state.task != .idle
     }
 
     private var isAnimatingMotion: Bool {
-        bobAmplitude > 0 || swayAmplitude > 0 || state.emotion == .sob
+        shouldAnimate || state.emotion == .sob
     }
 
     private var bobDuration: Double {
@@ -178,17 +182,40 @@ private struct GrassSpriteView: View {
     }
 
     private static let sobTrembleAmplitude: CGFloat = 0.3
+    private static let walkRange: CGFloat = 80
+    private static let walkDuration: Double = 5.0
+
+    private var isWalking: Bool { state.canWalk }
+
+    private func walkPhase(at date: Date) -> Double {
+        guard isWalking else { return 0 }
+        let t = date.timeIntervalSinceReferenceDate
+        return (t / Self.walkDuration).truncatingRemainder(dividingBy: 1.0)
+    }
+
+    private func walkOffset(phase: Double) -> CGFloat {
+        guard isWalking else { return 0 }
+        let wave = sin(phase * .pi * 2) * 0.5 + 0.5
+        return wave * Self.walkRange - Self.walkRange / 2
+    }
+
+    private func isMovingRight(phase: Double) -> Bool {
+        cos(phase * .pi * 2) > 0
+    }
 
     var body: some View {
         TimelineView(.animation(minimumInterval: 1.0 / 30, paused: !isAnimatingMotion)) { timeline in
+            let phase = walkPhase(at: timeline.date)
+
             SpriteSheetView(
                 spriteSheet: state.spriteSheetName,
                 frameCount: state.frameCount,
                 columns: state.columns,
                 fps: state.animationFPS,
-                isAnimating: true
+                isAnimating: shouldAnimate
             )
             .frame(width: SpriteLayout.size, height: SpriteLayout.size)
+            .scaleEffect(x: isWalking ? (isMovingRight(phase: phase) ? 1 : -1) : 1, y: 1, anchor: .center)
             .background(alignment: .bottom) {
                 if glowOpacity > 0 {
                     Ellipse()
@@ -200,7 +227,7 @@ private struct GrassSpriteView: View {
             }
             .rotationEffect(.degrees(swayDegrees(at: timeline.date)), anchor: .bottom)
             .offset(
-                x: SpriteLayout.xOffset(xPosition: xPosition, totalWidth: totalWidth) + trembleOffset(at: timeline.date, amplitude: state.emotion == .sob ? Self.sobTrembleAmplitude : 0),
+                x: SpriteLayout.xOffset(xPosition: xPosition, totalWidth: totalWidth) + walkOffset(phase: phase) + trembleOffset(at: timeline.date, amplitude: state.emotion == .sob ? Self.sobTrembleAmplitude : 0),
                 y: yOffset + bobOffset(at: timeline.date, duration: bobDuration, amplitude: bobAmplitude)
             )
         }

@@ -48,7 +48,7 @@ struct ActivityRowView: View {
 
     private var statusLabel: some View {
         let isSuccess = event.status == .success
-        return Text(isSuccess ? "Completed" : "Failed")
+        return Text(isSuccess ? "Completado" : "Falló")
             .font(.system(size: 12))
             .foregroundColor(isSuccess ? TerminalColors.secondaryText : TerminalColors.red)
     }
@@ -168,7 +168,7 @@ struct QuestionPromptView: View {
     }
 
     private var answerHint: some View {
-        Text("Answer in terminal")
+        Text("Responde en la terminal")
             .font(.system(size: 10).italic())
             .foregroundColor(TerminalColors.dimmedText)
     }
@@ -189,9 +189,9 @@ struct WorkingIndicatorView: View {
 
     private var statusText: String {
         switch state.task {
-        case .compacting: return "Compacting"
-        case .waiting:    return "Waiting"
-        default:          return "Clanking"
+        case .compacting: return "Compactando"
+        case .waiting:    return "Esperando"
+        default:          return "Trabajando"
         }
     }
 

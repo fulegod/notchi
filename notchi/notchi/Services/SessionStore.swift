@@ -196,12 +196,12 @@ final class SessionStore {
         let input = toolInput?.mapValues { $0.value }
         let description = SessionEvent.deriveDescription(tool: tool, toolInput: input)
         return PendingQuestion(
-            question: description ?? "\(toolName) wants to proceed",
-            header: "Permission Request",
+            question: description ?? "\(toolName) quiere continuar",
+            header: "Solicitud de Permiso",
             // Claude Code permission prompts always present these three choices
             options: [
-                (label: "Yes", description: nil),
-                (label: "Yes, and don't ask again", description: nil),
+                (label: "Sí", description: nil),
+                (label: "Sí, y no preguntar de nuevo", description: nil),
                 (label: "No", description: nil),
             ]
         )

@@ -12,8 +12,8 @@ struct PanelSettingsView: View {
 
     private var hookStatusText: String {
         if hooksError { return "Error" }
-        if hooksInstalled { return "Installed" }
-        return "Not Installed"
+        if hooksInstalled { return "Instalado" }
+        return "No Instalado"
     }
 
     private var hookStatusColor: Color {
@@ -54,7 +54,7 @@ struct PanelSettingsView: View {
     private var togglesSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Button(action: toggleLaunchAtLogin) {
-                SettingsRowView(icon: "power", title: "Launch at Login") {
+                SettingsRowView(icon: "power", title: "Iniciar al encender") {
                     ToggleSwitch(isOn: launchAtLogin)
                 }
             }
@@ -68,9 +68,9 @@ struct PanelSettingsView: View {
             .buttonStyle(.plain)
 
             Button(action: connectUsage) {
-                SettingsRowView(icon: "gauge.with.dots.needle.33percent", title: "Claude Usage") {
+                SettingsRowView(icon: "gauge.with.dots.needle.33percent", title: "Uso de Claude") {
                     statusBadge(
-                        usageConnected ? "Connected" : "Not Connected",
+                        usageConnected ? "Conectado" : "Sin Conexión",
                         color: usageConnected ? TerminalColors.green : TerminalColors.red
                     )
                 }
@@ -83,9 +83,9 @@ struct PanelSettingsView: View {
 
     private var apiKeyRow: some View {
         VStack(alignment: .leading, spacing: 6) {
-            SettingsRowView(icon: "brain", title: "Emotion Analysis") {
+            SettingsRowView(icon: "brain", title: "Análisis de Emociones") {
                 statusBadge(
-                    hasApiKey ? "Active" : "No Key",
+                    hasApiKey ? "Activo" : "Sin Key",
                     color: hasApiKey ? TerminalColors.green : TerminalColors.red
                 )
             }
@@ -102,7 +102,7 @@ struct PanelSettingsView: View {
                     .onSubmit { saveApiKey() }
                     .overlay(alignment: .leading) {
                         if apiKeyInput.isEmpty {
-                            Text("Anthropic API Key")
+                            Text("Clave API Anthropic")
                                 .font(.system(size: 11, design: .monospaced))
                                 .foregroundColor(TerminalColors.dimmedText)
                                 .padding(.leading, 8)
@@ -129,14 +129,14 @@ struct PanelSettingsView: View {
     private var actionsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Button(action: { updateManager.checkForUpdates() }) {
-                SettingsRowView(icon: "arrow.triangle.2.circlepath", title: "Check for Updates") {
+                SettingsRowView(icon: "arrow.triangle.2.circlepath", title: "Buscar Actualizaciones") {
                     updateStatusView
                 }
             }
             .buttonStyle(.plain)
 
             Button(action: openGitHubRepo) {
-                SettingsRowView(icon: "star", title: "Star on GitHub") {
+                SettingsRowView(icon: "star", title: "Estrella en GitHub") {
                     Image(systemName: "arrow.up.right")
                         .font(.system(size: 10))
                         .foregroundColor(TerminalColors.dimmedText)
@@ -157,7 +157,7 @@ struct PanelSettingsView: View {
             HStack {
                 Image(systemName: "xmark.circle")
                     .font(.system(size: 13))
-                Text("Quit Notchi")
+                Text("Salir de Notchi")
                     .font(.system(size: 12, weight: .medium))
             }
             .foregroundColor(TerminalColors.red)
@@ -217,14 +217,14 @@ struct PanelSettingsView: View {
             HStack(spacing: 4) {
                 ProgressView()
                     .controlSize(.mini)
-                Text("Checking...")
+                Text("Verificando...")
                     .font(.system(size: 10))
                     .foregroundColor(TerminalColors.dimmedText)
             }
         case .upToDate:
-            statusBadge("Up to date", color: TerminalColors.green)
+            statusBadge("Actualizado", color: TerminalColors.green)
         case .found(let version, _):
-            statusBadge("v\(version) available", color: TerminalColors.amber)
+            statusBadge("v\(version) disponible", color: TerminalColors.amber)
         case .downloading(let progress):
             HStack(spacing: 4) {
                 ProgressView(value: progress)
@@ -237,7 +237,7 @@ struct PanelSettingsView: View {
             HStack(spacing: 4) {
                 ProgressView()
                     .controlSize(.mini)
-                Text("Installing...")
+                Text("Instalando...")
                     .font(.system(size: 10))
                     .foregroundColor(TerminalColors.dimmedText)
             }
@@ -250,7 +250,7 @@ struct PanelSettingsView: View {
             HStack(spacing: 4) {
                 ProgressView()
                     .controlSize(.mini)
-                Text("Installing...")
+                Text("Instalando...")
                     .font(.system(size: 10))
                     .foregroundColor(TerminalColors.dimmedText)
             }

@@ -24,14 +24,14 @@ struct SoundPickerView: View {
                     .foregroundColor(TerminalColors.secondaryText)
                     .frame(width: 20)
 
-                Text("Notification Sound")
+                Text("Sonido de Notificación")
                     .font(.system(size: 12))
                     .foregroundColor(TerminalColors.primaryText)
 
                 Spacer()
 
                 HStack(spacing: 4) {
-                    Text(AppSettings.isMuted ? "Muted" : selectedSound.displayName)
+                    Text(AppSettings.isMuted ? "Silenciado" : selectedSound.displayName)
                         .font(.system(size: 11))
                         .foregroundColor(TerminalColors.secondaryText)
                     Image(systemName: selector.isPickerExpanded ? "chevron.up" : "chevron.down")

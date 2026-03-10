@@ -28,7 +28,7 @@ final class ClaudeUsageService {
 
         Task {
             guard let accessToken = KeychainManager.getAccessToken() else {
-                error = "Keychain access required"
+                error = "Se requiere acceso al llavero"
                 isConnected = false
                 AppSettings.isUsageEnabled = false
                 return
@@ -111,14 +111,14 @@ final class ClaudeUsageService {
             let (data, response) = try await URLSession.shared.data(for: request)
 
             guard let httpResponse = response as? HTTPURLResponse else {
-                error = "Invalid response"
+                error = "Respuesta inválida"
                 return
             }
 
             guard httpResponse.statusCode == 200 else {
                 if httpResponse.statusCode == 429 {
                     if currentUsage == nil {
-                        error = "Rate limited, polling every \(Int(pollInterval))s"
+                        error = "Límite de API, reintentando cada \(Int(pollInterval))s"
                     } else {
                         error = nil
                     }
@@ -137,7 +137,7 @@ final class ClaudeUsageService {
                         return
                     }
 
-                    error = "Token expired"
+                    error = "Token expirado"
                     isConnected = false
                     stopPolling()
                 } else {
@@ -154,7 +154,7 @@ final class ClaudeUsageService {
             logger.info("Usage fetched: \(self.currentUsage?.usagePercentage ?? 0)%")
 
         } catch {
-            self.error = "Network error"
+            self.error = "Error de red"
             logger.error("Fetch failed: \(error.localizedDescription)")
         }
     }

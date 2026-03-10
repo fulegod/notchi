@@ -119,6 +119,13 @@ struct NotchContentView: View {
             color: isExpanded ? .black.opacity(0.7) : .clear,
             radius: 6
         )
+        .overlay(alignment: .top) {
+            if !isExpanded {
+                headerSprites
+                    .offset(x: notchSize.width / 2 + 50, y: notchSize.height / 2 - 20)
+                    .allowsHitTesting(false)
+            }
+        }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .animation(panelAnimation, value: isExpanded)
         .onReceive(NotificationCenter.default.publisher(for: .notchiShouldCollapse)) { _ in
@@ -209,7 +216,7 @@ struct NotchContentView: View {
             HStack(spacing: 5) {
                 Image(systemName: "chevron.left")
                     .font(.system(size: 11, weight: .semibold))
-                Text("Back")
+                Text("Volver")
                     .font(.system(size: 12, weight: .medium))
             }
             .foregroundColor(.white.opacity(0.7))
@@ -232,8 +239,7 @@ struct NotchContentView: View {
             Color.clear
                 .frame(width: notchSize.width - cornerRadiusInsets.closed.top)
 
-            headerSprites
-                .offset(x: 15, y: -2)
+            Color.clear
                 .frame(width: sideWidth)
                 .opacity(isExpanded ? 0 : 1)
                 .animation(.none, value: isExpanded)
@@ -245,7 +251,8 @@ struct NotchContentView: View {
         let topSession = sessionStore.sortedSessions.first
         SessionSpriteView(
             state: topSession?.state ?? .idle,
-            isSelected: true
+            isSelected: true,
+            onTap: { panelManager.expand() }
         )
     }
 

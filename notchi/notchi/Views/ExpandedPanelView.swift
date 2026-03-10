@@ -248,10 +248,10 @@ struct ExpandedPanelView: View {
 
     private var emptyState: some View {
         let hooksInstalled = HookInstaller.isInstalled()
-        let title = hooksInstalled ? "Waiting for activity" : "Hooks not installed"
+        let title = hooksInstalled ? "Esperando actividad" : "Hooks no instalados"
         let subtitle = hooksInstalled
-            ? "Send a message in Claude Code to start tracking"
-            : "Open settings to set up Claude Code integration"
+            ? "Envía un mensaje en Claude Code para empezar"
+            : "Abre ajustes para configurar Claude Code"
 
         return VStack(spacing: 8) {
             Text(title)
@@ -291,8 +291,8 @@ struct ModeBadgeView: View {
 
     var color: Color {
         switch mode {
-        case "Plan Mode": TerminalColors.planMode
-        case "Accept Edits": TerminalColors.acceptEdits
+        case "Modo Plan": TerminalColors.planMode
+        case "Aceptar Ediciones": TerminalColors.acceptEdits
         default: TerminalColors.secondaryText
         }
     }

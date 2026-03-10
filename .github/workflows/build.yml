@@ -16,46 +16,55 @@ jobs:
       - name: Select Xcode
         run: sudo xcode-select -s /Applications/Xcode_16.2.app
 
-      - name: Resolve packages
+      - name: Build
         run: |
           cd notchi
-          xcodebuild -resolvePackageDependencies -project notchi.xcodeproj -scheme notchi
 
-      - name: Build archive
-        run: |
-          cd notchi
-          xcodebuild archive \
+          # Remove sandbox entitlement that requires proper signing
+          cat > notchi/notchi.entitlements << 'ENTEOF'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict/>
+          </plist>
+          ENTEOF
+
+          xcodebuild build \
             -project notchi.xcodeproj \
             -scheme notchi \
             -configuration Release \
-            -archivePath build/PokenNotch.xcarchive \
-            CODE_SIGN_IDENTITY="-" \
-            CODE_SIGN_STYLE=Manual \
-            DEVELOPMENT_TEAM="" \
-            SKIP_INSTALL=NO \
-            BUILD_LIBRARY_FOR_DISTRIBUTION=NO \
-            2>&1 | tail -30
+            -derivedDataPath build \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGN_IDENTITY="" \
+            ONLY_ACTIVE_ARCH=NO \
+            2>&1 | tail -5
 
-      - name: Export and package
+          echo "--- Build products ---"
+          find build/Build/Products/Release -type f -name "notchi" 2>/dev/null
+          find build/Build/Products/Release -name "*.app" -type d 2>/dev/null
+          ls -laR build/Build/Products/Release/notchi.app/Contents/MacOS/ 2>/dev/null || echo "MacOS dir empty"
+
+          # If binary still missing, check intermediates
+          find build -name "notchi" -not -path "*/SourcePackages/*" -type f 2>/dev/null | head -5
+
+      - name: Package
         run: |
-          ARCHIVE="notchi/build/PokenNotch.xcarchive"
-          APP="$ARCHIVE/Products/Applications/notchi.app"
+          APP="notchi/build/Build/Products/Release/notchi.app"
+          BINARY="$APP/Contents/MacOS/notchi"
 
-          if [ ! -d "$APP" ]; then
-            echo "App not in archive Products. Searching..."
-            find "$ARCHIVE" -name "notchi.app" -type d 2>/dev/null
-            find "$ARCHIVE" -name "notchi" -type f 2>/dev/null | head -10
-            # Try direct from build
-            find notchi/build -name "notchi" -type f -perm +111 2>/dev/null | head -10
-            APP=$(find "$ARCHIVE" -name "notchi.app" -type d | head -1)
+          # If binary is in Objects dir, copy it
+          if [ ! -f "$BINARY" ]; then
+            OBJ_BINARY=$(find notchi/build -path "*/Objects-normal/arm64/notchi" -type f 2>/dev/null | head -1)
+            if [ -n "$OBJ_BINARY" ]; then
+              echo "Found binary in intermediates: $OBJ_BINARY"
+              cp "$OBJ_BINARY" "$BINARY"
+              chmod +x "$BINARY"
+            fi
           fi
 
-          echo "App: $APP"
-          ls -la "$APP/Contents/MacOS/" 2>/dev/null || echo "No MacOS dir"
-          find "$APP" -type f | head -20
-
-          # Ad-hoc sign
-          codesign --force --deep --sign - "$APP" 2>/dev/null || true
+          file "$BINARY"
+          codesign --force --deep --sign - "$APP" || true
 
           ditto -c -k --keepParent "$APP" PokenNotch.zip
           ls -lh PokenNotch.zip

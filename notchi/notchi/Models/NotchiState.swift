@@ -25,29 +25,28 @@ enum NotchiTask: String, CaseIterable {
 
     var bobAmplitude: CGFloat {
         switch self {
-        case .sleeping, .compacting: return 0
-        case .idle:                  return 1.5
-        case .waiting:               return 0.5
+        case .sleeping, .compacting, .idle: return 0
+        case .waiting:               return 0.3
         case .working:               return 0.5
         }
     }
 
     var canWalk: Bool {
         switch self {
-        case .sleeping, .compacting, .waiting:
+        case .sleeping, .compacting, .waiting, .idle:
             return false
-        case .idle, .working:
+        case .working:
             return true
         }
     }
 
     var displayName: String {
         switch self {
-        case .idle:       return "Idle"
-        case .working:    return "Working..."
-        case .sleeping:   return "Sleeping"
-        case .compacting: return "Compacting..."
-        case .waiting:    return "Waiting..."
+        case .idle:       return "Descansando"
+        case .working:    return "Trabajando..."
+        case .sleeping:   return "Durmiendo"
+        case .compacting: return "Compactando..."
+        case .waiting:    return "Esperando..."
         }
     }
 
