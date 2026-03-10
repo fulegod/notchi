@@ -121,9 +121,17 @@ struct NotchContentView: View {
         )
         .overlay(alignment: .top) {
             if !isExpanded {
+                // Sprite visual (no clicks)
                 headerSprites
-                    .offset(x: notchSize.width / 2 + 50, y: notchSize.height / 2 - 20)
+                    .offset(x: notchSize.width / 2 + 20, y: notchSize.height / 2 - 20)
                     .allowsHitTesting(false)
+
+                // Fixed tap zone covering the Squirtle walk area
+                Color.clear
+                    .frame(width: 200, height: notchSize.height + 10)
+                    .contentShape(Rectangle())
+                    .onTapGesture { panelManager.expand() }
+                    .position(x: notchSize.width + 100, y: notchSize.height / 2)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)

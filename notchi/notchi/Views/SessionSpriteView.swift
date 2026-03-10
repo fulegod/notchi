@@ -59,6 +59,7 @@ struct SessionSpriteView: View {
                 y: bobOffset(at: timeline.date, duration: state.bobDuration, amplitude: bobAmplitude)
             )
         }
+        .contentShape(Rectangle())
         .onTapGesture {
             onTap?()
         }
