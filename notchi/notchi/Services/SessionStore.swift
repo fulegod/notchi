@@ -104,7 +104,13 @@ final class SessionStore {
 
         case "Stop", "SubagentStop":
             session.clearPendingQuestions()
-            session.updateTask(.idle)
+            // Detect text questions from Claude's last message
+            if let text = event.lastAssistantText,
+               text.trimmingCharacters(in: .whitespacesAndNewlines).hasSuffix("?") {
+                session.updateTask(.waiting)
+            } else {
+                session.updateTask(.idle)
+            }
 
         case "SessionEnd":
             session.endSession()

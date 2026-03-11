@@ -32,6 +32,7 @@ final class SessionData: Identifiable {
     private(set) var promptSubmitTime: Date?
     private(set) var permissionMode: String = "default"
     private(set) var pendingQuestions: [PendingQuestion] = []
+    private(set) var activeSubagentCount: Int = 0
 
     private var durationTimer: Task<Void, Never>?
     private var sleepTimer: Task<Void, Never>?
@@ -202,12 +203,25 @@ final class SessionData: Identifiable {
         }
     }
 
+    func incrementSubagentCount() {
+        activeSubagentCount += 1
+    }
+
+    func decrementSubagentCount() {
+        activeSubagentCount = max(0, activeSubagentCount - 1)
+    }
+
+    var hasActiveSubagents: Bool {
+        activeSubagentCount > 0
+    }
+
     func endSession() {
         durationTimer?.cancel()
         durationTimer = nil
         sleepTimer?.cancel()
         sleepTimer = nil
         isProcessing = false
+        activeSubagentCount = 0
     }
 
     private func trimEvents() {

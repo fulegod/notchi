@@ -59,6 +59,27 @@ tool_input = input_data.get('tool_input', {})
 if tool_input:
     output['tool_input'] = tool_input
 
+# For Stop events, extract last assistant text to detect text questions
+if hook_event == 'Stop':
+    last_msg = input_data.get('last_assistant_message', '')
+    last_text = ''
+    if isinstance(last_msg, str):
+        last_text = last_msg
+    elif isinstance(last_msg, dict):
+        content = last_msg.get('content', '')
+        if isinstance(content, str):
+            last_text = content
+        elif isinstance(content, list):
+            for block in content:
+                if isinstance(block, dict) and block.get('type') == 'text':
+                    last_text = block.get('text', '')
+    elif isinstance(last_msg, list):
+        for block in last_msg:
+            if isinstance(block, dict) and block.get('type') == 'text':
+                last_text = block.get('text', '')
+    if last_text:
+        output['last_assistant_text'] = last_text[-500:]
+
 try:
     sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     sock.connect('$SOCKET_PATH')

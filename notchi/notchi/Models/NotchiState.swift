@@ -59,19 +59,9 @@ enum NotchiTask: String, CaseIterable {
         }
     }
 
-    var frameCount: Int {
-        switch self {
-        case .compacting: return 5
-        default: return 6
-        }
-    }
+    var frameCount: Int { 6 }
 
-    var columns: Int {
-        switch self {
-        case .compacting: return 5
-        default: return 6
-        }
-    }
+    var columns: Int { 6 }
 }
 
 enum NotchiEmotion: String, CaseIterable {
